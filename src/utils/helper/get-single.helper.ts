@@ -1,14 +1,15 @@
 import { Model, Types } from 'mongoose';
 import { badRequestException, notFoundException } from '../custom-exception';
-import { isValidMongoId } from '../is-valid-mongoId';
+import { isValidMongoId } from '../common-functions';
 /**
  * To get single document from db
- * @param {Types.ObjectId} id id comes from frontend
- * @param {String} MODEL model name to generate dynamic message
- * @param {String} modelName model to query with
- * @param {String} populate fields to populate
- * @param {String} fieldsToIncludeInPopulate fields to include in populate
- * @returns {Object} single document from db
+ * @param {Types.ObjectId} id Id comes from frontend
+ * @param {String} MODEL Model name to generate dynamic message
+ * @param {String} modelName Model to query with
+ * @param {String} populate Fields to populate
+ * @param {String} fieldsToIncludeInPopulate Fields to include in populate
+ * @param {String} message Error message
+ * @returns {Object} Single document from db
  */
 export const getSingleHelper = async <T>(
   id: Types.ObjectId,
@@ -16,6 +17,7 @@ export const getSingleHelper = async <T>(
   modelName: Model<any>,
   populate: string = '',
   fieldsToIncludeInPopulate: string = '',
+  message: string = `${MODEL} not found`,
 ) => {
   if (!isValidMongoId(id)) {
     throw badRequestException('Id is not valid');
@@ -26,7 +28,7 @@ export const getSingleHelper = async <T>(
     .populate(populate, fieldsToIncludeInPopulate)
     .lean();
   if (!singleDocument) {
-    throw notFoundException(`${MODEL} not found`);
+    throw notFoundException(message);
   }
 
   return singleDocument as T;

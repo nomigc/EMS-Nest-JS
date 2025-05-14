@@ -61,7 +61,12 @@ export class OvertimeService {
       this.overtimeModel,
       null,
       null,
-      'employeeId',
+      [
+        {
+          path: 'employeeId',
+          select: 'firstName lastName userName',
+        },
+      ],
     );
 
     return {
@@ -83,13 +88,13 @@ export class OvertimeService {
 
   async approval(
     approveOvertimeDto: ApproveOvertimeDto,
-    currentUser: Types.ObjectId,
+    currentUserId: Types.ObjectId,
     id: Types.ObjectId,
   ) {
     const { status } = approveOvertimeDto;
     const overtime = editHelper(
       id,
-      { status, approvedBy: currentUser },
+      { status, approvedBy: currentUserId },
       OVERTIME_MODEL,
       this.overtimeModel,
     );
@@ -99,8 +104,6 @@ export class OvertimeService {
 
   async data(date: string) {
     const [year, month] = date.split('-').map(Number);
-    console.log('🚀 ~ OvertimeService ~ data ~ month:', month);
-    console.log('🚀 ~ OvertimeService ~ data ~ year:', year);
 
     const result = await this.overtimeModel.aggregate([
       {
@@ -121,7 +124,6 @@ export class OvertimeService {
         },
       },
     ]);
-    console.log('🚀 ~ OvertimeService ~ data ~ result:', result);
 
     return result[0];
   }

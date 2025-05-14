@@ -14,11 +14,27 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 import { OvertimeModule } from './controllers/employees/overtime/overtime.module';
 import { LeaveModule } from './controllers/employees/leave/leave.module';
 import { ClientModule } from './controllers/client/client.module';
+import { LeaveSettingModule } from './controllers/employees/leave-setting/leave-setting.module';
+import { AttendanceModule } from './controllers/employees/attendance/attendance.module';
+import { RolesAndPermissionsModule } from './controllers/commons/roles-and-permissions/roles-and-permissions.module';
+import { SeedingModule } from './seeding/module/seeding.module';
+import { GroupsModule } from './controllers/commons/groups/groups.module';
+import { MenusModule } from './controllers/commons/menus/menus.module';
+import { NotificationModule } from './controllers/notification/notification.module';
+import { minutes, ThrottlerModule } from '@nestjs/throttler';
 
 const GlobalImports = [
   ConfigModule.forRoot({
     isGlobal: true,
   }),
+  //* throttling implementation
+  ThrottlerModule.forRoot([
+    {
+      name: 'globalThrottler',
+      ttl: minutes(1),
+      limit: 60,
+    },
+  ]),
   DataBaseModule,
   AuthModule,
   DepartmentModule,
@@ -37,6 +53,13 @@ const GlobalImports = [
   OvertimeModule,
   LeaveModule,
   ClientModule,
+  LeaveSettingModule,
+  AttendanceModule,
+  RolesAndPermissionsModule,
+  SeedingModule,
+  GroupsModule,
+  MenusModule,
+  NotificationModule,
 ];
 
 export default GlobalImports;

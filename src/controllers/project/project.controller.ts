@@ -22,6 +22,7 @@ import { FileValidationPipe } from 'src/pipes/file';
 import { Types } from 'mongoose';
 import { JwtAuthGuard } from 'src/middlewares/guard';
 import { PROJECT_MODEL } from 'src/schemas/project';
+import { User } from 'src/decorator';
 
 @UseGuards(JwtAuthGuard)
 @Controller('project')
@@ -58,7 +59,7 @@ export class ProjectController {
     }),
   )
   async edit(
-    @Param('id') id: string,
+    @Param('id') id: Types.ObjectId,
     @Body() editProjectDto: EditProjectDto,
     @UploadedFiles(new FileValidationPipe(false)) files: Array<Express.Multer.File>,
   ) {
@@ -70,6 +71,12 @@ export class ProjectController {
 
     const employee = await this.projectService.edit(editProjectDto, id);
     return successfulResponse(`${PROJECT_MODEL} edited successfully`, employee);
+  }
+
+  @Get('role')
+  async projectByRole(@User('id') id: Types.ObjectId, @User('role') role: string) {
+    const project = await this.projectService.projectByRole(id, role);
+    return successfulResponse(`${PROJECT_MODEL} found successfully`, project);
   }
 
   @Get(':id')
